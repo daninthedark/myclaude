@@ -1,0 +1,554 @@
+<title>Bilik Situasi Sempadan Malaysia</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Dashboard pencerobohan sempadan dan penyeludupan di Malaysia berdasarkan angka rasmi yang diumumkan agensi penguat kuasa, setiap angka bersumber.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: briefing-room page. Masthead, KPI strip, then numbered fronts (darat, laut, pintu masuk, PATI), each a chart + reading notes; sources ledger closes the page. */
+:root {
+  --bg: #f6f7f9;
+  --panel: #ffffff;
+  --ink: #0e1520;
+  --ink-2: #445063;
+  --muted: #6b7686;
+  --line: #dde2ea;
+  --line-strong: #c4ccd8;
+  --bar: #2a78d6;
+  --bar-soft: #9ec5f4;
+  --alert: #d03b3b;
+  --alert-wash: #fbeaea;
+  --tag-bg: #eaf0f8;
+  --tag-ink: #1c5cab;
+  --f-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b1119; --panel: #111821; --ink: #e9edf3; --ink-2: #b4bfcd; --muted: #8592a3;
+    --line: #1f2a37; --line-strong: #2f3d4e; --bar: #4b8fe0; --bar-soft: #234a78;
+    --alert: #e5605e; --alert-wash: #2a1517; --tag-bg: #16243a; --tag-ink: #8db8ef;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b1119; --panel: #111821; --ink: #e9edf3; --ink-2: #b4bfcd; --muted: #8592a3;
+  --line: #1f2a37; --line-strong: #2f3d4e; --bar: #4b8fe0; --bar-soft: #234a78;
+  --alert: #e5605e; --alert-wash: #2a1517; --tag-bg: #16243a; --tag-ink: #8db8ef;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--f-body); font-size: 15px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 48px;
+}
+.wrap { max-width: 1180px; margin: 0 auto; }
+a { color: var(--tag-ink); }
+a:focus-visible, summary:focus-visible, button:focus-visible { outline: 2px solid var(--bar); outline-offset: 2px; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 600; letter-spacing: 0.01em; text-wrap: balance; margin: 0; }
+
+/* Masthead */
+.mast { padding-block: 28px 22px; border-bottom: 1px solid var(--line-strong); display: grid; gap: 14px; }
+.mast-top { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between;
+  font-family: var(--f-mono); font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.live { display: inline-flex; align-items: center; gap: 8px; color: var(--alert); font-weight: 500; }
+.live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--alert); }
+h1 { font-size: clamp(2.1rem, 5.4vw, 3.6rem); line-height: 1.02; text-transform: uppercase; font-weight: 700; }
+.lead { max-width: 70ch; color: var(--ink-2); font-size: 1.04rem; margin: 0; }
+.lead strong { color: var(--ink); }
+
+/* KPI strip */
+.kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--line-strong); background: var(--panel); margin-top: 24px; }
+.kpi { padding: 16px 18px 18px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); display: grid; gap: 4px; align-content: start; min-width: 0; }
+.kpi:nth-child(3n) { border-right: 0; }
+.kpi:nth-last-child(-n+3) { border-bottom: 0; }
+.kpi .lbl { font-family: var(--f-mono); font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.kpi .val { font-family: var(--f-display); font-size: clamp(2.2rem, 4.2vw, 3rem); font-weight: 700; line-height: 1; }
+.kpi .val small { font-size: 0.5em; font-weight: 600; color: var(--ink-2); margin-left: 2px; }
+.kpi .ctx { font-size: 13.5px; color: var(--ink-2); }
+.kpi.alert .val { color: var(--alert); }
+.delta { display: inline-block; font-family: var(--f-mono); font-size: 12px; padding: 1px 6px; border-radius: 3px; background: var(--alert-wash); color: var(--alert); margin-right: 4px; }
+
+/* Source tag */
+.src { font-family: var(--f-mono); font-size: 11px; font-weight: 500; color: var(--tag-ink); background: var(--tag-bg);
+  padding: 0 5px; border-radius: 3px; text-decoration: none; white-space: nowrap; vertical-align: 1px; }
+.src:hover { text-decoration: underline; }
+
+/* Fronts */
+.front { margin-top: 44px; display: grid; gap: 16px; }
+.front-head { display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; align-items: baseline; border-top: 3px solid var(--ink); padding-top: 12px; }
+.front-no { font-family: var(--f-mono); font-size: 12px; color: var(--muted); letter-spacing: 0.08em; grid-row: span 2; padding-top: 6px; }
+.front-head h2 { font-size: clamp(1.6rem, 3.2vw, 2.2rem); line-height: 1.1; text-transform: uppercase; }
+.front-head p { margin: 0; color: var(--ink-2); max-width: 75ch; }
+.grid-2 { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 16px; }
+.grid-2.even { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.card { background: var(--panel); border: 1px solid var(--line); padding: 18px 18px 14px; min-width: 0; display: grid; gap: 12px; align-content: start; }
+.card h3 { font-family: var(--f-body); font-size: 15px; font-weight: 600; letter-spacing: 0; }
+.card .sub { font-size: 13px; color: var(--muted); margin-top: -8px; }
+.notes { display: grid; gap: 12px; align-content: start; min-width: 0; }
+.note { border-left: 3px solid var(--line-strong); padding: 2px 0 2px 14px; }
+.note.hot { border-left-color: var(--alert); }
+.note b { display: block; font-family: var(--f-display); font-size: 1.7rem; line-height: 1.05; font-weight: 700; }
+.note.hot b { color: var(--alert); }
+.note span { font-size: 14px; color: var(--ink-2); }
+.foot { font-size: 12.5px; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 8px; }
+
+/* Charts */
+.hbar { display: grid; gap: 6px; }
+.hrow { display: grid; grid-template-columns: minmax(96px, 30%) minmax(0, 1fr); gap: 10px; align-items: center; font-size: 13.5px; cursor: default; }
+.hrow .hl { color: var(--ink-2); line-height: 1.25; }
+.track { position: relative; height: 22px; display: flex; align-items: center; gap: 8px; }
+.fill { height: 18px; background: var(--bar); border-radius: 0 4px 4px 0; min-width: 2px; flex: none; transition: opacity .15s; }
+.fill.est { background: repeating-linear-gradient(135deg, var(--bar) 0 4px, var(--bar-soft) 4px 7px); }
+.hrow.hlt .fill { background: var(--alert); }
+.hrow .v { font-family: var(--f-mono); font-size: 12.5px; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.hbar:hover .hrow:not(:hover) .fill { opacity: .45; }
+
+.cols { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 14px; align-items: end; height: 220px;
+  border-bottom: 1px solid var(--line-strong); padding-top: 26px; position: relative; }
+.col { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 6px; cursor: default; min-width: 0; }
+.col .bar { width: min(64px, 70%); background: var(--bar); border-radius: 4px 4px 0 0; min-height: 2px; transition: opacity .15s; }
+.col.partial .bar { background: repeating-linear-gradient(135deg, var(--bar) 0 4px, var(--bar-soft) 4px 7px); }
+.col.hlt .bar { background: var(--alert); }
+.col .v { font-family: var(--f-mono); font-size: 12px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.cols:hover .col:not(:hover) .bar { opacity: .45; }
+.xlabels { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 14px; font-size: 12.5px; color: var(--ink-2); text-align: center; line-height: 1.25; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--muted); }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 2px; vertical-align: -1px; margin-right: 6px; background: var(--bar); }
+.legend i.alert { background: var(--alert); }
+.legend i.est { background: repeating-linear-gradient(135deg, var(--bar) 0 3px, var(--bar-soft) 3px 5px); }
+
+details.tbl summary { font-size: 12.5px; color: var(--tag-ink); cursor: pointer; width: max-content; }
+.tbl-wrap { overflow-x: auto; margin-top: 8px; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+th { font-family: var(--f-mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 500; }
+td.n { text-align: right; font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+#tip { position: fixed; pointer-events: none; z-index: 20; background: var(--ink); color: var(--bg); font-size: 12.5px; line-height: 1.4;
+  padding: 8px 10px; border-radius: 4px; max-width: 280px; box-shadow: 0 4px 16px rgba(0,0,0,.25); }
+#tip b { display: block; font-size: 13px; }
+
+/* Timeline strip */
+.ops { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border: 1px solid var(--line); background: var(--panel); }
+.op { padding: 14px 16px; border-right: 1px solid var(--line); display: grid; gap: 4px; align-content: start; min-width: 0; }
+.op:last-child { border-right: 0; }
+.op .when { font-family: var(--f-mono); font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.op b { font-family: var(--f-display); font-size: 1.6rem; line-height: 1.05; }
+.op span { font-size: 13.5px; color: var(--ink-2); }
+
+/* Caveats + sources */
+.caveats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 28px; margin: 0; padding: 0; list-style: none; }
+.caveats li { font-size: 14px; color: var(--ink-2); padding-left: 16px; position: relative; }
+.caveats li::before { content: ""; position: absolute; left: 0; top: .6em; width: 7px; height: 7px; background: var(--alert); }
+.ledger { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); }
+.ledger table { min-width: 720px; }
+.ledger td:first-child { font-family: var(--f-mono); color: var(--tag-ink); white-space: nowrap; }
+.ledger td { vertical-align: top; }
+.colophon { margin-top: 28px; font-size: 12.5px; color: var(--muted); max-width: 80ch; }
+
+@media (max-width: 860px) {
+  .grid-2, .grid-2.even { grid-template-columns: minmax(0, 1fr); }
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kpi:nth-child(3n) { border-right: 1px solid var(--line); }
+  .kpi:nth-child(2n) { border-right: 0; }
+  .kpi:nth-last-child(-n+3) { border-bottom: 1px solid var(--line); }
+  .kpi:nth-last-child(-n+2) { border-bottom: 0; }
+  .ops { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .op:nth-child(2n) { border-right: 0; }
+  .op:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+  .caveats { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 480px) {
+  .kpis { grid-template-columns: minmax(0, 1fr); }
+  .kpi { border-right: 0 !important; border-bottom: 1px solid var(--line) !important; }
+  .kpi:last-child { border-bottom: 0 !important; }
+  .hrow { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .front-head { grid-template-columns: minmax(0, 1fr); }
+  .front-no { grid-row: auto; padding-top: 0; }
+  .cols, .xlabels { gap: 6px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="mast">
+    <div class="mast-top">
+      <span class="live">Bilik Situasi · Data awam</span>
+      <span>Dikemas kini 26 Okt 2026 · 15 sumber bertarikh</span>
+    </div>
+    <h1>Sempadan Malaysia:<br>Siapa masuk, apa diseludup</h1>
+    <p class="lead">Malaysia ada sempadan darat dengan Thailand, Indonesia dan Brunei, serta perairan yang bersempadan dengan enam negara. Halaman ini menghimpunkan <strong>angka rasmi yang diumumkan agensi penguat kuasa</strong>: Kastam, PDRM, Maritim Malaysia, AKPS, Imigresen dan ESSCOM. Setiap angka ada tag sumber seperti <a class="src" href="#s1">S1</a>. Klik tag itu untuk lihat siapa yang umumkan, bila, dan pautan asalnya.</p>
+  </header>
+
+  <section class="kpis" aria-label="Angka utama">
+    <div class="kpi alert">
+      <span class="lbl">Dadah dirampas PDRM, 2025</span>
+      <span class="val">RM3.1<small>bilion</small></span>
+      <span class="ctx">215 tan · 270 sindiket ditumpaskan · 1 Jan–18 Dis 2025 <a class="src" href="#s3">S3</a></span>
+    </div>
+    <div class="kpi">
+      <span class="lbl">Rampasan Kastam, 2025</span>
+      <span class="val">RM1.88<small>bilion</small></span>
+      <span class="ctx"><span class="delta">+15.3%</span>7,097 kes seludup dan elak cukai <a class="src" href="#s1">S1</a></span>
+    </div>
+    <div class="kpi">
+      <span class="lbl">Rampasan Maritim, Jan–Jun 2026</span>
+      <span class="val">RM2.29<small>bilion</small></span>
+      <span class="ctx">516 ditahan · RM2.11 bilion daripadanya bot tempatan <a class="src" href="#s4">S4</a></span>
+    </div>
+    <div class="kpi alert">
+      <span class="lbl">Lorong tikus dikesan PGA</span>
+      <span class="val">281<small>lokasi</small></span>
+      <span class="ctx">128 di sempadan Kelantan–Narathiwat sahaja <a class="src" href="#s9">S9</a></span>
+    </div>
+    <div class="kpi">
+      <span class="lbl">PATI ditahan Imigresen, 2026</span>
+      <span class="val">37,313<small>orang</small></span>
+      <span class="ctx">10,374 operasi · 1 Jan–29 Sep 2026 <a class="src" href="#s11">S11</a></span>
+    </div>
+    <div class="kpi">
+      <span class="lbl">Rampasan AKPS di pintu masuk, 2026</span>
+      <span class="val">&gt;RM265<small>juta</small></span>
+      <span class="ctx"><span class="delta">≈3×</span>berbanding ±RM80 juta tahun lepas <a class="src" href="#s8">S8</a></span>
+    </div>
+  </section>
+
+  <!-- FRONT 1: DARAT -->
+  <section class="front" id="darat">
+    <div class="front-head">
+      <span class="front-no">SEKTOR 1</span>
+      <h2>Sempadan darat: lorong tikus</h2>
+      <p>Lorong tikus ialah laluan tidak diwartakan yang digunakan untuk membawa PATI, dadah, rokok, beras dan barang subsidi. Kelantan menanggung hampir separuh daripada semua lokasi yang dikenal pasti.</p>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Lokasi lorong tikus mengikut negeri</h3>
+        <p class="sub">Dalam kawasan tanggungjawab Pasukan Gerakan Am (PGA). Diumumkan di Dewan Negara, 10 Dis 2024.</p>
+        <div class="hbar" id="c-lorong"></div>
+        <div class="legend"><span><i class="alert"></i>Sempadan Kelantan–Thailand</span><span><i></i>Negeri lain</span></div>
+        <details class="tbl"><summary>Lihat jadual</summary><div class="tbl-wrap" data-table="c-lorong"></div></details>
+        <div class="foot">Sumber: Menteri Dalam Negeri, sesi soal jawab Dewan Negara <a class="src" href="#s9">S9</a></div>
+      </div>
+      <div class="notes">
+        <div class="note hot"><b>45.6%</b><span>daripada 281 lorong tikus berada di sempadan Kelantan–Narathiwat (128 lokasi). <a class="src" href="#s9">S9</a></span></div>
+        <div class="note"><b>136 km</b><span>panjang sempadan Sungai Golok. Polis Kelantan melaporkan jenayah rentas sempadan turun ±90% dalam dua bulan selepas larangan laluan tidak diwartakan dikuatkuasakan mulai 1 Dis 2024. <a class="src" href="#s15">S15</a></span></div>
+        <div class="note"><b>360 PATI</b><span>ditahan PGA Briged Tenggara di Kelantan, Jan–15 Mei 2026, dalam 78 serbuan. 9 tekong darat ditahan, 6 daripadanya rakyat tempatan. <a class="src" href="#s10">S10</a></span></div>
+      </div>
+    </div>
+    <div class="grid-2 even">
+      <div class="card">
+        <h3>Siapa yang diseludup masuk ikut Sungai Golok</h3>
+        <p class="sub">PATI ditahan PGA di Kelantan mengikut warganegara, Jan–15 Mei 2026 (n = 360).</p>
+        <div class="hbar" id="c-warga"></div>
+        <details class="tbl"><summary>Lihat jadual</summary><div class="tbl-wrap" data-table="c-warga"></div></details>
+        <div class="foot">"Lain-lain" dikira daripada jumlah 360 tolak lima warganegara yang dinyatakan. <a class="src" href="#s10">S10</a></div>
+      </div>
+      <div class="card">
+        <h3>Sebelum ini: Op Benteng (Mei 2020–Dis 2022)</h3>
+        <p class="sub">Operasi sempadan ATM–PDRM di bawah National Task Force semasa pandemik, ditamatkan 31 Dis 2022.</p>
+        <div class="hbar" id="c-benteng"></div>
+        <details class="tbl"><summary>Lihat jadual</summary><div class="tbl-wrap" data-table="c-benteng"></div></details>
+        <div class="foot">Nilai rampasan keseluruhan RM1.10 bilion. Satu laporan menulis 23,984 PATI, satu lagi 23,894; angka lebih rendah digunakan di sini. <a class="src" href="#s14">S14</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FRONT 2: PENYELUDUPAN -->
+  <section class="front" id="seludup">
+    <div class="front-head">
+      <span class="front-no">SEKTOR 2</span>
+      <h2>Penyeludupan: nilai yang dipatahkan Kastam</h2>
+      <p>Nilai rampasan termasuk duti dan cukai yang cuba dielak. Dalam tiga tahun, nilai yang dipatahkan JKDM lebih dua kali ganda. Sebahagian lonjakan 2024 datang daripada perubahan cara JKDM mengukur prestasi, daripada bilangan kes kepada nilai duti dan cukai.</p>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Nilai rampasan dan cukai JKDM setahun (RM juta)</h3>
+        <div class="cols" id="c-jkdm" role="img" aria-label="2023 RM884.27 juta, 2024 RM1,644 juta, 2025 RM1,880 juta"></div>
+        <div class="xlabels" id="c-jkdm-x"></div>
+        <details class="tbl"><summary>Lihat jadual</summary><div class="tbl-wrap" data-table="c-jkdm"></div></details>
+        <div class="foot">2023 dan 2024 daripada <a class="src" href="#s2">S2</a>. 2025 daripada <a class="src" href="#s1">S1</a>. JKDM sendiri menyebut angka 2024 sebagai RM1.63 bilion dalam pengumuman 2025.</div>
+      </div>
+      <div class="card">
+        <h3>Apa yang diseludup, 2025 (RM juta)</h3>
+        <p class="sub">Jumlah RM1.88 bilion, 7,097 kes.</p>
+        <div class="hbar" id="c-komoditi"></div>
+        <div class="legend"><span><i></i>Diumumkan JKDM</span><span><i class="est"></i>Baki dikira (jumlah tolak kategori lain)</span></div>
+        <details class="tbl"><summary>Lihat jadual</summary><div class="tbl-wrap" data-table="c-komoditi"></div></details>
+        <div class="foot">"Lain-lain": daging dan ayam beku, tekstil, tayar, alat ganti kenderaan, peralatan telekomunikasi, mata wang. <a class="src" href="#s1">S1</a></div>
+      </div>
+    </div>
+    <div class="ops">
+      <div class="op"><span class="when">Rokok · 2025</span><b>2,472 kes</b><span>RM497.27 juta. Komoditi dengan kes terbanyak. <a class="src" href="#s1">S1</a></span></div>
+      <div class="op"><span class="when">Dadah · Kastam 2025</span><b>7,738 kg</b><span>734 kes, RM490.75 juta. <a class="src" href="#s1">S1</a></span></div>
+      <div class="op"><span class="when">Dadah · PDRM 2025</span><b>215 tan</b><span>609 operasi, 19 makmal haram diserbu. <a class="src" href="#s3">S3</a></span></div>
+      <div class="op"><span class="when">Aset sindiket · PDRM 2025</span><b>RM141 juta</b><span>disita, RM29 juta dilucut hak. <a class="src" href="#s3">S3</a></span></div>
+    </div>
+  </section>
+
+  <!-- FRONT 3: LAUT -->
+  <section class="front" id="laut">
+    <div class="front-head">
+      <span class="front-no">SEKTOR 3</span>
+      <h2>Laut: Selat Melaka hingga Pantai Timur Sabah</h2>
+      <p>Di laut, ancaman utama ialah nelayan asing yang menceroboh, penyeludupan diesel dan barang kawalan, dan penculikan untuk tebusan di Sabah. Nilai rampasan Maritim Malaysia separuh pertama 2026 melonjak kerana nilai bot tempatan yang dirampas dikira sekali.</p>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Rampasan Maritim Malaysia mengikut kategori, Jan–Jun 2026 (RM juta)</h3>
+        <p class="sub">Jumlah RM2.29 bilion, 516 ditahan.</p>
+        <div class="hbar" id="c-apmm26"></div>
+        <details class="tbl"><summary>Lihat jadual</summary><div class="tbl-wrap" data-table="c-apmm26"></div></details>
+        <div class="foot">Ketua Pengarah Maritim Malaysia, 16 Jul 2026 <a class="src" href="#s4">S4</a>. Bar bot tempatan dipotong supaya kategori lain kelihatan; nilai sebenar tertera.</div>
+      </div>
+      <div class="card">
+        <h3>Maritim Malaysia, setahun penuh</h3>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Tahun</th><th style="text-align:right">Tangkapan</th><th style="text-align:right">Nilai rampasan</th><th>Sumber</th></tr></thead>
+            <tbody>
+              <tr><td>2023</td><td class="n">±1,200</td><td class="n">RM101.9 juta</td><td><a class="src" href="#s6">S6</a></td></tr>
+              <tr><td>2024</td><td class="n">1,271</td><td class="n">&gt;RM91 juta</td><td><a class="src" href="#s5">S5</a></td></tr>
+              <tr><td>Jan–Jun 2026</td><td class="n">516</td><td class="n">RM2.29 bilion</td><td><a class="src" href="#s4">S4</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note hot"><b>RM85 juta</b><span>daripada RM91 juta rampasan Maritim 2024 ialah bot dan hasil tangkapan nelayan asing yang menceroboh. Diesel RM1.3 juta, dadah RM983,500. <a class="src" href="#s5">S5</a></span></div>
+        <div class="foot">Angka 2025 setahun penuh belum ditemui dalam kenyataan rasmi; hanya Jan–Jul 2025: 851 tangkapan, ±RM84 juta.</div>
+      </div>
+    </div>
+    <div class="ops">
+      <div class="op"><span class="when">ESSCOM · 12 tahun (2013–2025)</span><b>59</b><span>cubaan culik untuk tebusan digagalkan di ESSZone. <a class="src" href="#s13">S13</a></span></div>
+      <div class="op"><span class="when">ESSCOM · 12 tahun</span><b>&gt;16,000</b><span>PATI ditahan dalam operasi bersepadu Pantai Timur Sabah. <a class="src" href="#s13">S13</a></span></div>
+      <div class="op"><span class="when">ESSCOM · 12 tahun</span><b>&gt;500</b><span>bot nelayan asing dihalau atau ditahan kerana menceroboh. <a class="src" href="#s13">S13</a></span></div>
+      <div class="op"><span class="when">Ops Sanggah · 2024</span><b>RM24 juta</b><span>rampasan, 536 ditahan, 227 kenderaan dan bot dirampas. <a class="src" href="#s12">S12</a></span></div>
+    </div>
+  </section>
+
+  <!-- FRONT 4: PINTU MASUK -->
+  <section class="front" id="pintu">
+    <div class="front-head">
+      <span class="front-no">SEKTOR 4</span>
+      <h2>Pintu masuk rasmi: AKPS</h2>
+      <p>Agensi Kawalan dan Perlindungan Sempadan (AKPS) mula beroperasi pada 2025 dan menyatukan pemeriksaan beberapa agensi di pintu masuk. Pada akhir 2025, AKPS mengawal 22 pintu masuk dengan lebih 6,000 pegawai, kira-kira separuh daripada kekuatan optimum 13,721.</p>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Rampasan AKPS 2025 mengikut kategori (RM juta)</h3>
+        <p class="sub">Jumlah hampir RM82.1 juta, sehingga 17 Dis 2025.</p>
+        <div class="hbar" id="c-akps"></div>
+        <details class="tbl"><summary>Lihat jadual</summary><div class="tbl-wrap" data-table="c-akps"></div></details>
+        <div class="foot">Ketua Pengarah AKPS, 17 Dis 2025 <a class="src" href="#s7">S7</a>. JKDM: tugas pemeriksaan diambil alih mulai 1 Okt 2025 sahaja.</div>
+      </div>
+      <div class="notes">
+        <div class="note hot"><b>&gt;RM265 juta</b><span>rampasan AKPS sehingga 27 Sep 2026, kira-kira tiga kali ganda tahun sebelumnya. Dadah dan sisa elektronik antara kategori utama. <a class="src" href="#s8">S8</a></span></div>
+        <div class="note"><b>Hampir setiap hari</b><span>AKPS menahan individu, kebanyakannya bukan warganegara, yang cuba menyeludup keluar bunga ganja melalui KLIA 1 dan KLIA 2. <a class="src" href="#s8">S8</a></span></div>
+        <div class="note"><b>205 kg</b><span>dadah dirampas AKPS pada 2025 (205,154 gram), bernilai hampir RM20.2 juta. <a class="src" href="#s7">S7</a></span></div>
+        <div class="note"><b>22 → 120+</b><span>pintu masuk yang dirancang diambil alih AKPS menjelang 2026. <a class="src" href="#s7">S7</a></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FRONT 5: PATI -->
+  <section class="front" id="pati">
+    <div class="front-head">
+      <span class="front-no">SEKTOR 5</span>
+      <h2>Selepas melepasi sempadan: PATI dan majikan</h2>
+      <p>Penyeludupan manusia hidup kerana ada permintaan. Tangkapan majikan yang menggaji atau melindungi PATI melonjak lebih lima kali ganda dari 2023 ke 2024, dan terus naik pada 2025.</p>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Majikan ditahan Jabatan Imigresen setahun</h3>
+        <div class="cols" id="c-majikan" role="img" aria-label="2023: 346, 2024: 1,859, 2025: 2,202, 2026 hingga 29 Sep: 1,809"></div>
+        <div class="xlabels" id="c-majikan-x"></div>
+        <div class="legend"><span><i></i>Tahun penuh</span><span><i class="est"></i>Separa tahun (hingga 29 Sep 2026)</span></div>
+        <details class="tbl"><summary>Lihat jadual</summary><div class="tbl-wrap" data-table="c-majikan"></div></details>
+        <div class="foot">Menteri Dalam Negeri, 3 Okt 2026 <a class="src" href="#s11">S11</a>. 1,692 daripada 1,809 majikan pada 2026 ialah warganegara Malaysia.</div>
+      </div>
+      <div class="notes">
+        <div class="note"><b>137,603</b><span>individu diperiksa Imigresen, 1 Jan–29 Sep 2026; 37,313 PATI ditahan (27%). <a class="src" href="#s11">S11</a></span></div>
+        <div class="note hot"><b>+536%</b><span>kenaikan tangkapan majikan, 2023 (346) ke 2025 (2,202). <a class="src" href="#s11">S11</a></span></div>
+        <div class="note"><b>6 daripada 9</b><span>tekong darat yang ditahan di Kelantan awal 2026 ialah rakyat tempatan. Rangkaian penyeludupan bergantung pada orang dalam. <a class="src" href="#s10">S10</a></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAVEATS -->
+  <section class="front" id="kaedah">
+    <div class="front-head">
+      <span class="front-no">KAEDAH</span>
+      <h2>Cara membaca angka ini</h2>
+      <p>Data sempadan Malaysia tidak diterbitkan sebagai satu set data terbuka yang seragam. Angka di sini dikutip daripada kenyataan rasmi yang dilaporkan media arus perdana dan agensi berita negara.</p>
+    </div>
+    <ul class="caveats">
+      <li>Nilai rampasan bukan ukuran saiz jenayah. Ia ukuran apa yang berjaya ditangkap. Kenaikan boleh bermakna penguatkuasaan lebih baik, bukan semestinya lebih banyak penyeludupan.</li>
+      <li>Agensi berbeza mengira nilai secara berbeza. JKDM memasukkan duti dan cukai; Maritim Malaysia memasukkan nilai vesel. Jangan jumlahkan angka antara agensi.</li>
+      <li>Tempoh tidak selari. Ada angka setahun penuh, ada separa tahun (Jan–Jun, Jan–Sep). Tempoh dinyatakan pada setiap angka.</li>
+      <li>Rampasan dadah PDRM dan JKDM boleh bertindih dalam operasi bersepadu. Kedua-duanya ditunjukkan berasingan, tidak dicampur.</li>
+      <li>Angka ESSCOM 2024 (S12) disahkan melalui petikan laporan NST kerana laman asal tidak dapat dibuka semasa semakan.</li>
+      <li>Angka "baki dikira" pada carta komoditi JKDM 2025 ialah anggaran halaman ini: RM1.88 bilion tolak tiga kategori yang diumumkan.</li>
+    </ul>
+  </section>
+
+  <!-- SOURCES -->
+  <section class="front" id="sumber">
+    <div class="front-head">
+      <span class="front-no">SUMBER</span>
+      <h2>Dari mana data ini diambil</h2>
+      <p>Semua pautan dibuka di tab baharu. Tarikh ialah tarikh laporan diterbitkan.</p>
+    </div>
+    <div class="ledger">
+      <table>
+        <thead><tr><th>Tag</th><th>Agensi / angka</th><th>Diumumkan oleh</th><th>Terbitan</th><th>Tarikh</th></tr></thead>
+        <tbody>
+          <tr id="s1"><td>S1</td><td>JKDM 2025: RM1.88 bilion, 7,097 kes, pecahan komoditi</td><td>KP Kastam Datuk Anis Rizana Mohd Zainudin</td><td><a href="https://berita.rtm.gov.my/kes/senarai-berita-kes/senarai-artikel/kastam-tumpas-7097-kes-seludup-seleweng-duti-cukai-cecah-rm1-88-bilion/" target="_blank" rel="noopener">Berita RTM</a></td><td>9 Jan 2026</td></tr>
+          <tr id="s2"><td>S2</td><td>JKDM 2024: RM1.644 bilion, 7,215 kes; 2023: RM884.27 juta</td><td>KP Kastam Datuk Anis Rizana Mohd Zainudin</td><td><a href="https://www.bernama.com/en/news.php?id=2390153" target="_blank" rel="noopener">Bernama</a></td><td>6 Feb 2025</td></tr>
+          <tr id="s3"><td>S3</td><td>PDRM dadah 2025: 215 tan, RM3.1 bilion, 270 sindiket</td><td>Pengarah JSJN Datuk Hussein Omar Khan</td><td><a href="https://berita.rtm.gov.my/kes/senarai-berita-kes/senarai-artikel/pdrm-rekod-rampasan-dadah-rm3-1-bilion-sepanjang-2025/" target="_blank" rel="noopener">Berita RTM</a></td><td>20 Dis 2025</td></tr>
+          <tr id="s4"><td>S4</td><td>Maritim Malaysia Jan–Jun 2026: RM2.29 bilion, 516 ditahan</td><td>KP Maritim Laksamana Datuk Mohd Rosli Abdullah</td><td><a href="https://www.nst.com.my/amp/news/nation/2026/07/1490386/mmea-records-rm229bil-seizures-516-arrests-june" target="_blank" rel="noopener">NST / Bernama</a></td><td>16 Jul 2026</td></tr>
+          <tr id="s5"><td>S5</td><td>Maritim Malaysia 2024: &gt;RM91 juta, 1,271 tangkapan</td><td>Menteri Dalam Negeri Datuk Seri Saifuddin Nasution Ismail</td><td><a href="https://www.bernama.com/bm/news.php?id=2379086" target="_blank" rel="noopener">Bernama</a></td><td>3 Jan 2025</td></tr>
+          <tr id="s6"><td>S6</td><td>Maritim Malaysia 2023: RM101.9 juta, ±1,200 tangkapan</td><td>KP Maritim Laksamana Maritim Datuk Hamid Mohd Amin</td><td><a href="https://pahangmedia.my/archives/39809" target="_blank" rel="noopener">Pahang Media</a></td><td>15 Feb 2024</td></tr>
+          <tr id="s7"><td>S7</td><td>AKPS 2025: RM82.1 juta, 22 pintu masuk, pecahan kategori</td><td>KP AKPS Datuk Seri Mohd Shuhaily Mohd Zain</td><td><a href="https://bernama.com/bm/news.php?id=2503804" target="_blank" rel="noopener">Bernama</a></td><td>17 Dis 2025</td></tr>
+          <tr id="s8"><td>S8</td><td>AKPS 2026: &gt;RM265 juta, ≈3× tahun lepas</td><td>KP AKPS Datuk Seri Mohd Shuhaily Mohd Zain</td><td><a href="https://berita.rtm.gov.my/kes/senarai-berita-kes/senarai-artikel/akps-rekod-rampasan-lebih-rm265-juta-tahun-ini/" target="_blank" rel="noopener">Berita RTM</a></td><td>27 Sep 2026</td></tr>
+          <tr id="s9"><td>S9</td><td>281 lorong tikus mengikut negeri</td><td>Menteri Dalam Negeri, Dewan Negara</td><td><a href="https://www.airtimes.my/tag/jenayah-rentas-sempadan/" target="_blank" rel="noopener">Air Times</a></td><td>11 Dis 2024</td></tr>
+          <tr id="s10"><td>S10</td><td>PGA Kelantan: 360 PATI, 78 serbuan, warganegara</td><td>Komander PGA Briged Tenggara SAC Ahmad Radzi Hussain</td><td><a href="https://berita.rtm.gov.my/kes/senarai-berita-kes/senarai-artikel/pga-tahan-360-pati-tumpaskan-rangkaian-penyeludupan-di-kelantan/" target="_blank" rel="noopener">Berita RTM</a></td><td>15 Mei 2026</td></tr>
+          <tr id="s11"><td>S11</td><td>Imigresen 2026: 37,313 PATI, majikan ditahan 2023–2026</td><td>Menteri Dalam Negeri Datuk Seri Saifuddin Nasution Ismail</td><td><a href="https://www.hmetro.com.my/amp/mutakhir/2026/10/1418464/jim-laksana-10374-operasi-tahun-ini-tangkap-37313-pati" target="_blank" rel="noopener">Harian Metro</a></td><td>3 Okt 2026</td></tr>
+          <tr id="s12"><td>S12</td><td>ESSCOM Ops Sanggah 2024: RM24 juta, 536 ditahan</td><td>ESSCOM</td><td><a href="https://www.nst.com.my/news/crime-courts/2025/01/1157732/esscom-seizes-rm24mil-smuggled-goods-during-2024-op" target="_blank" rel="noopener">New Straits Times</a></td><td>Jan 2025</td></tr>
+          <tr id="s13"><td>S13</td><td>ESSCOM 12 tahun: 59 cubaan culik, &gt;16,000 PATI, &gt;500 bot asing</td><td>Penasihat PPDJS Sabah Mohd. Zaki Harry Susanto</td><td><a href="https://jesseltontimes.com/2025/04/06/esscom-masih-relevan-12-tahun-lindungi-pantai-timur-sabah/" target="_blank" rel="noopener">Jesselton Times</a></td><td>6 Apr 2025</td></tr>
+          <tr id="s14"><td>S14</td><td>Op Benteng Mei 2020–Dis 2022: PATI, tekong, penyeludup, RM1.10 bilion</td><td>ATM / National Task Force</td><td><a href="https://www.airtimes.my/tag/op-benteng/" target="_blank" rel="noopener">Air Times</a></td><td>28 Dis 2022</td></tr>
+          <tr id="s15"><td>S15</td><td>Sungai Golok 136 km; jenayah rentas sempadan turun ±90%</td><td>Polis Kelantan</td><td><a href="https://www.airtimes.my/tag/jenayah-rentas-sempadan/" target="_blank" rel="noopener">Air Times</a></td><td>10 Mac 2025</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="colophon">Halaman ini bebas dan tidak mewakili mana-mana agensi kerajaan. Angka disemak terhadap laporan asal pada 26 Okt 2026. Jika agensi menerbitkan angka akhir yang berbeza, angka agensi yang terpakai.</p>
+  </section>
+</div>
+<div id="tip" hidden></div>
+
+<script>
+(function () {
+  var fmt = function (n, d) { return n.toLocaleString("en-US", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }); };
+  var tip = document.getElementById("tip");
+  function showTip(e, html) {
+    tip.innerHTML = html; tip.hidden = false;
+    var x = e.clientX + 14, y = e.clientY + 14, r = tip.getBoundingClientRect();
+    if (x + r.width > innerWidth - 8) x = e.clientX - r.width - 14;
+    if (y + r.height > innerHeight - 8) y = e.clientY - r.height - 14;
+    tip.style.left = Math.max(8, x) + "px"; tip.style.top = Math.max(8, y) + "px";
+  }
+  function hideTip() { tip.hidden = true; }
+  function bindTip(el, html) {
+    el.addEventListener("mousemove", function (e) { showTip(e, html); });
+    el.addEventListener("mouseleave", hideTip);
+  }
+  function tipHtml(r, unit) {
+    return "<b>" + r.label + "</b>" + r.text + (unit ? " " + unit : "") + (r.note ? "<br>" + r.note : "") + "<br>Sumber " + r.src;
+  }
+  var tables = {};
+
+  function hbar(id, rows, o) {
+    o = o || {};
+    var el = document.getElementById(id);
+    var max = o.cap || Math.max.apply(null, rows.map(function (r) { return r.v; }));
+    rows.forEach(function (r) {
+      var row = document.createElement("div");
+      row.className = "hrow" + (r.hl ? " hlt" : "");
+      var w = Math.min(r.v, max) / max * (o.room || 78);
+      row.innerHTML = '<span class="hl">' + r.label + '</span><span class="track"><span class="fill' + (r.est ? " est" : "") + '" style="width:' + w + '%"></span><span class="v">' + r.text + (r.cut ? " ▸" : "") + "</span></span>";
+      bindTip(row, tipHtml(r, o.unit));
+      el.appendChild(row);
+    });
+    tables[id] = { rows: rows, head: o.head || "Nilai" };
+  }
+
+  function cols(id, rows, o) {
+    o = o || {};
+    var el = document.getElementById(id), xl = document.getElementById(id + "-x");
+    var max = Math.max.apply(null, rows.map(function (r) { return r.v; }));
+    rows.forEach(function (r) {
+      var c = document.createElement("div");
+      c.className = "col" + (r.partial ? " partial" : "") + (r.hl ? " hlt" : "");
+      c.innerHTML = '<span class="v">' + r.text + '</span><span class="bar" style="height:calc(' + (r.v / max) + ' * (100% - 22px))"></span>';
+      bindTip(c, tipHtml(r, o.unit));
+      el.appendChild(c);
+      var l = document.createElement("span"); l.textContent = r.label; xl.appendChild(l);
+    });
+    tables[id] = { rows: rows, head: o.head || "Nilai" };
+  }
+
+  hbar("c-lorong", [
+    { label: "Kelantan (sempadan Narathiwat)", v: 128, text: "128", src: "S9", hl: true },
+    { label: "Sabah", v: 50, text: "50", src: "S9" },
+    { label: "Sarawak", v: 38, text: "38", src: "S9" },
+    { label: "Johor", v: 27, text: "27", src: "S9" },
+    { label: "Kedah", v: 18, text: "18", src: "S9" },
+    { label: "Selangor", v: 12, text: "12", src: "S9" },
+    { label: "Perlis", v: 8, text: "8", src: "S9" }
+  ], { unit: "lokasi", head: "Lorong tikus" });
+
+  hbar("c-warga", [
+    { label: "Myanmar", v: 264, text: "264", src: "S10", hl: true, note: "73% daripada 360" },
+    { label: "Thailand", v: 40, text: "40", src: "S10" },
+    { label: "Bangladesh", v: 30, text: "30", src: "S10" },
+    { label: "Indonesia", v: 9, text: "9", src: "S10" },
+    { label: "India", v: 8, text: "8", src: "S10" },
+    { label: "Lain-lain", v: 9, text: "9", src: "S10", est: true, note: "Dikira: 360 tolak warganegara yang dinyatakan" }
+  ], { unit: "PATI", head: "PATI ditahan" });
+
+  hbar("c-benteng", [
+    { label: "PATI", v: 23894, text: "23,894", src: "S14", hl: true },
+    { label: "Tekong", v: 1444, text: "1,444", src: "S14" },
+    { label: "Penyeludup", v: 1377, text: "1,377", src: "S14" }
+  ], { unit: "orang", head: "Ditahan" });
+
+  cols("c-jkdm", [
+    { label: "2023", v: 884.27, text: "884", src: "S2", note: "RM884.27 juta" },
+    { label: "2024", v: 1644, text: "1,644", src: "S2", note: "7,215 kes · +85.9%" },
+    { label: "2025", v: 1880, text: "1,880", src: "S1", hl: true, note: "7,097 kes · +15.3%" }
+  ], { unit: "RM juta", head: "RM juta" });
+
+  hbar("c-komoditi", [
+    { label: "Lain-lain", v: 556.30, text: "556.30", src: "S1" },
+    { label: "Rokok", v: 497.27, text: "497.27", src: "S1", note: "2,472 kes" },
+    { label: "Dadah", v: 490.75, text: "490.75", src: "S1", hl: true, note: "734 kes · 7,738.39 kg" },
+    { label: "Kenderaan, arak, mercun, bunga", v: 335.7, text: "±335.7", src: "S1", est: true, note: "Anggaran: jumlah RM1.88 bilion tolak tiga kategori di atas" }
+  ], { unit: "RM juta", head: "RM juta" });
+
+  hbar("c-apmm26", [
+    { label: "Bot tempatan", v: 2110, text: "2,110", src: "S4", cut: true, note: "Bar dipotong; nilai sebenar RM2.11 bilion" },
+    { label: "Dadah", v: 86.06, text: "86.06", src: "S4", hl: true },
+    { label: "Vesel nelayan asing", v: 66, text: "66.00", src: "S4", hl: true },
+    { label: "Rokok seludup", v: 25.16, text: "25.16", src: "S4" },
+    { label: "Udang", v: 5.2, text: "5.20", src: "S4" },
+    { label: "Diesel", v: 3.33, text: "3.33", src: "S4" }
+  ], { unit: "RM juta", head: "RM juta", cap: 100 });
+
+  hbar("c-akps", [
+    { label: "MAQIS (kuarantin, hidupan liar)", v: 59.9, text: "≈59.9", src: "S7" },
+    { label: "Dadah", v: 20.2, text: "≈20.2", src: "S7", hl: true, note: "205,154 gram" },
+    { label: "Kesihatan (ubat, bahan kimia)", v: 1.4, text: "1.40", src: "S7" },
+    { label: "JKDM (dari 1 Okt)", v: 0.222519, text: "0.22", src: "S7" },
+    { label: "JPJ (diesel, kenderaan)", v: 0.18359, text: "0.18", src: "S7" }
+  ], { unit: "RM juta", head: "RM juta" });
+
+  cols("c-majikan", [
+    { label: "2023", v: 346, text: "346", src: "S11" },
+    { label: "2024", v: 1859, text: "1,859", src: "S11" },
+    { label: "2025", v: 2202, text: "2,202", src: "S11", hl: true },
+    { label: "2026*", v: 1809, text: "1,809", src: "S11", partial: true, note: "Hingga 29 Sep 2026 sahaja" }
+  ], { unit: "majikan", head: "Majikan ditahan" });
+
+  document.querySelectorAll("[data-table]").forEach(function (w) {
+    var t = tables[w.getAttribute("data-table")]; if (!t) return;
+    var h = '<table><thead><tr><th>Item</th><th style="text-align:right">' + t.head + "</th><th>Nota</th><th>Sumber</th></tr></thead><tbody>";
+    t.rows.forEach(function (r) {
+      h += "<tr><td>" + r.label + '</td><td class="n">' + r.text + "</td><td>" + (r.note || (r.est ? "Dikira" : "")) + '</td><td><a class="src" href="#' + r.src.toLowerCase() + '">' + r.src + "</a></td></tr>";
+    });
+    w.innerHTML = h + "</tbody></table>";
+  });
+})();
+</script>
